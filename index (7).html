@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THAARAI — Daily Plant Logs</title>
+<link rel="icon" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep: #0B4F5C;
+    --teal: #0F7C8C;
+    --aqua: #3FBAC2;
+    --foam: #EAF6F6;
+    --paper: #FFFFFF;
+    --ink: #0B2E33;
+    --slate: #5C7A7E;
+    --line: #D7E9E9;
+    --amber: #E8A33D;
+    --err: #C1503F;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background: var(--foam);
+    color: var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Wave header */
+  header{
+    position:relative;
+    background: linear-gradient(135deg, var(--deep), var(--teal));
+    padding: 40px 20px 64px;
+    color:#fff;
+    overflow:hidden;
+  }
+  header .inner{max-width:760px;margin:0 auto;position:relative;z-index:2;display:flex;align-items:center;gap:18px;}
+  header .logo{
+    width:64px;height:64px;border-radius:50%;
+    box-shadow:0 4px 16px rgba(0,0,0,0.25);
+    flex-shrink:0;
+    background:#fff;
+    object-fit:cover;
+  }
+  header .titleblock{min-width:0;}
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color: var(--aqua);
+    font-weight:600;
+    margin:0 0 8px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(28px,6vw,42px);
+    margin:0 0 6px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  header p.sub{margin:0;color:#CFEBEB;font-size:15px;max-width:520px;}
+  header svg.wave{
+    position:absolute;bottom:-2px;left:0;width:100%;height:60px;z-index:1;
+  }
+
+  /* Tabs */
+  .tabs{
+    max-width:760px;
+    margin:-38px auto 0;
+    padding:0 20px;
+    position:relative;
+    z-index:3;
+    display:flex;
+    gap:8px;
+  }
+  .tab{
+    flex:1;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13px;
+    color:var(--slate);
+    box-shadow:0 6px 18px rgba(11,79,92,0.10);
+    transition:all .18s ease;
+    user-select:none;
+  }
+  .tab .drop{
+    display:block;
+    width:9px;height:9px;
+    border-radius:50% 50% 50% 0;
+    background:var(--line);
+    transform:rotate(45deg);
+    margin:0 auto 6px;
+    transition:background .18s ease;
+  }
+  .tab.active{
+    background: var(--deep);
+    color:#fff;
+    border-color:var(--deep);
+    transform:translateY(-2px);
+  }
+  .tab.active .drop{background:var(--aqua);}
+
+  main{max-width:760px;margin:0 auto;padding:28px 20px 80px;}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 24px;
+    box-shadow:0 10px 30px rgba(11,79,92,0.06);
+  }
+  .card h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:20px;
+    margin:0 0 4px;
+    color:var(--deep);
+  }
+  .card .desc{color:var(--slate);font-size:13.5px;margin:0 0 24px;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid.single{grid-template-columns:1fr;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .field.full{grid-column:1/-1;}
+  label{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--deep);
+    letter-spacing:.01em;
+  }
+  label .opt{color:var(--slate);font-weight:400;font-size:11.5px;}
+  input, textarea, select{
+    font-family:'Inter',sans-serif;
+    border:1.5px solid var(--line);
+    border-radius:9px;
+    padding:11px 12px;
+    font-size:14.5px;
+    color:var(--ink);
+    background:#fcfefe;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+    width:100%;
+  }
+  input:focus, textarea:focus, select:focus{
+    border-color:var(--teal);
+    box-shadow:0 0 0 3px rgba(15,124,140,0.14);
+  }
+  textarea{resize:vertical;min-height:64px;}
+
+  input[readonly]{
+    background: var(--foam);
+    border-color: var(--aqua);
+    color: var(--deep);
+    font-weight:700;
+    cursor:not-allowed;
+  }
+  input[readonly]:focus{box-shadow:none;}
+  .formula-note{
+    font-size:11.5px;color:var(--slate);margin:-8px 0 18px;font-style:italic;
+  }
+
+  .subhead{
+    font-size:11.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--aqua);
+    margin:22px 0 10px;
+    padding-top:14px;
+    border-top:1px dashed var(--line);
+  }
+  .subhead:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+
+  button.submit{
+    margin-top:10px;
+    width:100%;
+    background: var(--deep);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;
+    letter-spacing:.01em;
+    transition:background .15s ease, transform .1s ease;
+  }
+  button.submit:hover{background:var(--teal);}
+  button.submit:active{transform:scale(0.99);}
+  button.submit:disabled{background:var(--slate);cursor:not-allowed;}
+
+  .status{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:9px;
+    font-size:13.5px;
+    display:none;
+    font-weight:500;
+  }
+  .status.ok{display:block;background:#E4F6EC;color:#1F7A4D;border:1px solid #BEE9D2;}
+  .status.bad{display:block;background:#FBEAE7;color:var(--err);border:1px solid #F2CCC4;}
+
+  .setup-flag{
+    max-width:760px;margin:16px auto 0;padding:0 20px;
+  }
+  .setup-flag .box{
+    background:#FFF6E8;border:1px solid #F0DBB0;color:#8A5A15;
+    border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.5;
+  }
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  footer{
+    text-align:center;color:var(--slate);font-size:12px;padding:20px;
+  }
+
+  @media (max-width:520px){
+    .grid{grid-template-columns:1fr;}
+    .tab{font-size:12px;padding:12px 6px;}
+    header .logo{width:48px;height:48px;}
+    header .inner{gap:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <img src="logo.jpg" alt="Thaarai logo" class="logo">
+    <div class="titleblock">
+      <p class="eyebrow">Where Purity Flows</p>
+      <h1>THAARAI</h1>
+      <p class="sub">Inventory, production and dispatch — logged from the floor, saved straight to the register.</p>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+    <path fill="#EAF6F6" d="M0,32 C240,60 480,0 720,18 C960,36 1200,54 1440,24 L1440,60 L0,60 Z"></path>
+  </svg>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-panel="inventory"><span class="drop"></span>Inventory Log</div>
+  <div class="tab" data-panel="production"><span class="drop"></span>Production Log</div>
+  <div class="tab" data-panel="dispatch"><span class="drop"></span>Dispatch Log</div>
+</div>
+
+<div class="setup-flag" id="setupFlag" style="display:none;">
+  <div class="box">
+    ⚠️ <strong>Backend not connected yet.</strong> Open <code>index.html</code> in a text editor and replace <code>SCRIPT_URL</code> near the bottom with your Google Apps Script Web App URL. See the README for the 5-minute setup.
+  </div>
+</div>
+
+<main>
+
+  <!-- INVENTORY LOG -->
+  <div class="panel active" id="panel-inventory">
+    <div class="card">
+      <h2>Inventory Log</h2>
+      <p class="desc">Opening stock, consumption, receipts and closing balance for the day.</p>
+      <form id="form-inventory">
+        <div class="grid">
+          <div class="field"><label>S. No</label><input type="text" name="sno" required></div>
+          <div class="field"><label>Date</label><input type="date" name="date" required></div>
+        </div>
+
+        <div class="subhead">Opening Stock</div>
+        <div class="grid">
+          <div class="field"><label>300ml</label><input type="number" name="opening_300ml" min="0" class="inv-calc"></div>
+          <div class="field"><label>500ml</label><input type="number" name="opening_500ml" min="0" class="inv-calc"></div>
+          <div class="field"><label>1 Litre</label><input type="number" name="opening_1l" min="0" class="inv-calc"></div>
+          <div class="field"><label>Cap</label><input type="number" name="opening_cap" min="0" class="inv-calc"></div>
+        </div>
+
+        <div class="subhead">Movement</div>
+        <div class="grid">
+          <div class="field"><label>Consumed</label><input type="number" name="consumed" min="0" class="inv-calc"></div>
+          <div class="field"><label>Received Stock</label><input type="number" name="received_stock" min="0" class="inv-calc"></div>
+          <div class="field"><label>Invoice No <span class="opt">(optional)</span></label><input type="text" name="invoice_no"></div>
+          <div class="field">
+            <label>Closing Stock <span class="opt">(auto)</span></label>
+            <input type="number" name="closing_stock" id="inv-closing" readonly tabindex="-1">
+          </div>
+        </div>
+        <p class="formula-note">Closing Stock = Opening Stock (all sizes) − Consumed + Received Stock</p>
+
+        <div class="field full"><label>Remarks / Sign</label><input type="text" name="remarks"></div>
+
+        <button class="submit" type="submit">Save Inventory Entry</button>
+        <div class="status" id="status-inventory"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PRODUCTION LOG -->
+  <div class="panel" id="panel-production">
+    <div class="card">
+      <h2>Production Log</h2>
+      <p class="desc">Raw material drawn and water/product output for the day.</p>
+      <form id="form-production">
+        <div class="grid">
+          <div class="field"><label>S. No</label><input type="text" name="sno" required></div>
+          <div class="field"><label>Date</label><input type="date" name="date" required></div>
+        </div>
+        <div class="subhead">Raw Material Taken</div>
+        <div class="grid">
+          <div class="field"><label>300ml</label><input type="number" name="raw_300ml" min="0" class="prod-calc"></div>
+          <div class="field"><label>500ml</label><input type="number" name="raw_500ml" min="0" class="prod-calc"></div>
+          <div class="field"><label>1 Litre</label><input type="number" name="raw_1l" min="0" class="prod-calc"></div>
+          <div class="field"><label>Cap</label><input type="number" name="raw_cap" min="0" class="prod-calc"></div>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label>Total Raw Material Taken <span class="opt">(auto)</span></label>
+            <input type="number" name="raw_material_total" id="prod-raw-total" readonly tabindex="-1">
+          </div>
+          <div class="field"><label>Water Produced</label><input type="number" name="water_produced" min="0"></div>
+        </div>
+
+        <div class="subhead">Product Produced</div>
+        <div class="grid">
+          <div class="field"><label>300ml</label><input type="number" name="product_300ml" min="0" class="prod-calc"></div>
+          <div class="field"><label>500ml</label><input type="number" name="product_500ml" min="0" class="prod-calc"></div>
+          <div class="field"><label>1 Litre</label><input type="number" name="product_1l" min="0" class="prod-calc"></div>
+          <div class="field"><label>Cap</label><input type="number" name="product_cap" min="0" class="prod-calc"></div>
+        </div>
+        <div class="field">
+          <label>Total Product Produced <span class="opt">(auto)</span></label>
+          <input type="number" name="product_produced_total" id="prod-product-total" readonly tabindex="-1">
+        </div>
+        <p class="formula-note">Totals = sum of 300ml + 500ml + 1 Litre + Cap</p>
+
+        <div class="field full"><label>Remarks <span class="opt">(optional)</span></label><textarea name="remarks"></textarea></div>
+
+        <button class="submit" type="submit">Save Production Entry</button>
+        <div class="status" id="status-production"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DISPATCH LOG -->
+  <div class="panel" id="panel-dispatch">
+    <div class="card">
+      <h2>Dispatch Log</h2>
+      <p class="desc">Stock produced, dispatched, returns and closing balance.</p>
+      <form id="form-dispatch">
+        <div class="grid">
+          <div class="field"><label>S. No</label><input type="text" name="sno" required></div>
+          <div class="field"><label>Date</label><input type="date" name="date" required></div>
+        </div>
+        <div class="subhead">Opening Stock</div>
+        <div class="grid">
+          <div class="field"><label>300ml</label><input type="number" name="opening_300ml" min="0" class="disp-calc"></div>
+          <div class="field"><label>500ml</label><input type="number" name="opening_500ml" min="0" class="disp-calc"></div>
+          <div class="field"><label>1 Litre</label><input type="number" name="opening_1l" min="0" class="disp-calc"></div>
+          <div class="field"><label>Cap</label><input type="number" name="opening_cap" min="0" class="disp-calc"></div>
+        </div>
+
+        <div class="subhead">Movement</div>
+        <div class="grid">
+          <div class="field"><label>Produced (Cases)</label><input type="number" name="produced_cases" min="0" class="disp-calc"></div>
+          <div class="field"><label>Dispatched</label><input type="number" name="dispatched" min="0" class="disp-calc"></div>
+          <div class="field"><label>Returns</label><input type="number" name="returns" min="0" class="disp-calc"></div>
+          <div class="field">
+            <label>Closing Stock <span class="opt">(auto)</span></label>
+            <input type="number" name="closing_stock" id="disp-closing" readonly tabindex="-1">
+          </div>
+        </div>
+        <p class="formula-note">Closing Stock = Opening Stock (all sizes) + Produced − Dispatched + Returns</p>
+        <div class="field full"><label>Remarks / Discrepancy</label><textarea name="remarks"></textarea></div>
+
+        <button class="submit" type="submit">Save Dispatch Entry</button>
+        <div class="status" id="status-dispatch"></div>
+      </form>
+    </div>
+  </div>
+
+</main>
+
+<footer>THAARAI · plant records, kept simple</footer>
+
+<script>
+  // ====== CONFIGURE THIS ======
+  // Paste your Google Apps Script Web App URL here (see README.md).
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJ4iKGYTbtgIe707BDRsoqmdRS-Im1mCwEljil-QSAJR5o8ftnc8E3FE-XP0M_qRD6Gw/exec";
+  // =============================
+
+  if (SCRIPT_URL === "SCRIPT_URL") {
+    document.getElementById('setupFlag').style.display = 'block';
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+    });
+  });
+
+  // Default date = today
+  document.querySelectorAll('input[type="date"]').forEach(d => {
+    d.valueAsDate = new Date();
+  });
+
+  // Auto-calculate Inventory Closing Stock
+  const invClosing = document.getElementById('inv-closing');
+  function recalcInventory() {
+    const val = name => parseFloat(document.querySelector(`#form-inventory input[name="${name}"]`).value) || 0;
+    const openingTotal = val('opening_300ml') + val('opening_500ml') + val('opening_1l') + val('opening_cap');
+    const closing = openingTotal - val('consumed') + val('received_stock');
+    invClosing.value = closing;
+  }
+  document.querySelectorAll('#form-inventory .inv-calc').forEach(inp => {
+    inp.addEventListener('input', recalcInventory);
+  });
+
+  // Auto-calculate Production totals (Raw Material Taken + Product Produced)
+  const prodRawTotal = document.getElementById('prod-raw-total');
+  const prodProductTotal = document.getElementById('prod-product-total');
+  function recalcProduction() {
+    const val = name => parseFloat(document.querySelector(`#form-production input[name="${name}"]`).value) || 0;
+    prodRawTotal.value = val('raw_300ml') + val('raw_500ml') + val('raw_1l') + val('raw_cap');
+    prodProductTotal.value = val('product_300ml') + val('product_500ml') + val('product_1l') + val('product_cap');
+  }
+  document.querySelectorAll('#form-production .prod-calc').forEach(inp => {
+    inp.addEventListener('input', recalcProduction);
+  });
+
+  // Auto-calculate Dispatch Closing Stock
+  const dispClosing = document.getElementById('disp-closing');
+  function recalcDispatch() {
+    const val = name => parseFloat(document.querySelector(`#form-dispatch input[name="${name}"]`).value) || 0;
+    const openingTotal = val('opening_300ml') + val('opening_500ml') + val('opening_1l') + val('opening_cap');
+    const closing = openingTotal + val('produced_cases') - val('dispatched') + val('returns');
+    dispClosing.value = closing;
+  }
+  document.querySelectorAll('#form-dispatch .disp-calc').forEach(inp => {
+    inp.addEventListener('input', recalcDispatch);
+  });
+
+  function attachForm(formId, sheetName, statusId) {
+    const form = document.getElementById(formId);
+    const status = document.getElementById(statusId);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button.submit');
+      status.style.display = 'none';
+
+      if (SCRIPT_URL === "SCRIPT_URL") {
+        status.className = 'status bad';
+        status.textContent = 'Backend not connected yet — set SCRIPT_URL in index.html first.';
+        status.style.display = 'block';
+        return;
+      }
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      data.sheet = sheetName;
+      data.submitted_at = new Date().toISOString();
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors', // Apps Script web apps don't return CORS headers
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(data)
+        });
+        // With no-cors we can't read the response, so we optimistically assume success.
+        status.className = 'status ok';
+        status.textContent = 'Saved ✓ Entry added to the ' + sheetName + ' sheet.';
+        status.style.display = 'block';
+        form.reset();
+        document.querySelectorAll('input[type="date"]').forEach(d => d.valueAsDate = new Date());
+      } catch (err) {
+        status.className = 'status bad';
+        status.textContent = 'Could not save — check your internet connection and try again.';
+        status.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Entry';
+      }
+    });
+  }
+
+  attachForm('form-inventory', 'Inventory', 'status-inventory');
+  attachForm('form-production', 'Production', 'status-production');
+  attachForm('form-dispatch', 'Dispatch', 'status-dispatch');
+</script>
+
+</body>
+</html>
